@@ -10,8 +10,6 @@ window.onload = function () {
     });
     createItems();
     createTiles();
-
-
 };
 
 
@@ -159,8 +157,33 @@ function closebtn() {
     document.getElementById("blueprint").style.display = "none";
 }
 
+/*
+https://stackoverflow.com/a/33928558
+*/
+function copyToClipboard(text) {
+    if (window.clipboardData && window.clipboardData.setData) {
+        // IE specific code path to prevent textarea being shown while dialog is visible.
+        return clipboardData.setData("Text", text);
+
+    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+        } catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            return false;
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+}
+
 function copybtn() {
-    document.execCommand('copy');
+    copyToClipboard(document.getElementById('bp').value);
 }
 
 function bpbtn() {
@@ -353,7 +376,6 @@ function insertImg(tile, url) {
     div.appendChild(img);
     tile.appendChild(div);
 }
-
 
 function encode(json) {
     var string = json.replace(/\s/g, "");
