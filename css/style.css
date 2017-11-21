@@ -107,6 +107,7 @@ html {
     border: 1px solid black;
     height: 30px;
     width: 30px;
+    user-select: none;
 }
 
 .tile:hover {
@@ -124,6 +125,10 @@ html {
 
 .tile > div:hover {
     border: 1px solid yellow;
+}
+
+.tile img {
+    pointer-events: none;
 }
 
 .placedimage {

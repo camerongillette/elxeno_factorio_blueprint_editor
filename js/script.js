@@ -295,11 +295,9 @@ function createTiles() {
             if (d == 0 && r == 0) {
                 tile.style.background = "darkgrey";
             }
+            tile.addEventListener('mouseover', tileMouseOver);
             tile.addEventListener('click', tileClick);
-            tile.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-                this.innerHTML = "";
-            }, false);
+            tile.addEventListener('contextmenu', tileContextMenu, false);
             row.appendChild(tile);
         }
         grid.appendChild(row);
@@ -325,10 +323,12 @@ function createItems() {
 
     }
 }
+
 function itemClick() {
     createPreview(this.dataset.url, this.dataset.r, this.dataset.direction, this.dataset.w, this.dataset.h)
     setActiveItem(this);
 }
+
 function setActiveItem(item) {
     var active = document.querySelectorAll('.activeitem')
     if (active.length > 0) {
@@ -337,6 +337,13 @@ function setActiveItem(item) {
         }
     }
     item.classList.add("activeitem");
+}
+
+function tileContextMenu(e) {
+    if (e) {
+        e.preventDefault();
+    }
+    this.innerHTML = "";
 }
 
 function tileClick() {
@@ -363,11 +370,16 @@ function tileClick() {
         previewdiv.setAttribute("class", "entity");
         this.appendChild(previewdiv);
     }
+}
 
+function tileMouseOver(event) {
+    if (event.buttons == 1) { // Left mouse button is pressed
+        tileClick.call(this);
+    } else if (event.buttons == 2) {
+        tileContextMenu.call(this);
+    }
 }
 function insertImg(tile, url) {
-
-
     div = document.createElement("div");
     div.setAttribute("class", "itemdiv");
     img = document.createElement("img");
