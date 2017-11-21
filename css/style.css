@@ -127,6 +127,11 @@ html {
     border: 1px solid yellow;
 }
 
+.tile img,
+#preview img {
+    image-rendering: pixelated;
+}
+
 .tile img {
     pointer-events: none;
 }
