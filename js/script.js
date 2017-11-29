@@ -16,14 +16,16 @@ window.onload = function () {
     createTiles();
     // https://stackoverflow.com/questions/1586330/access-get-directly-from-javascript#1586333
     window.$_GET = GETfromUrl();
-    if($_GET.id != undefined){
-        getFromMyJSON($_GET.id);
+    if(window.$_GET.id != undefined){
+        getFromMyJSON(window.$_GET.id);
     }
 };
 function GETfromUrl(){
     return location.search.substr(1).split("&").reduce(function(o,i){
-        u = decodeURIComponent;
-        [k,v] = i.split("=");
+        var u = decodeURIComponent;
+        var pair = i.split("=");
+        var k = pair[0];
+        var v = pair[1];
         o[u(k)] = v&&u(v);
         return o;
     },{});
@@ -150,7 +152,7 @@ function createEntitiesFromJSON(jsonobj){
     var items = document.querySelectorAll('#sidebar div'); 
     console.log(entities.length);
     console.log(entities);
-    for (ent = 0; ent < entities.length; ent++){
+    for (var ent = 0; ent < entities.length; ent++){
         var name = entities[ent].name;
         var type = entities[ent].type;
         if (type == "input"){
@@ -158,7 +160,7 @@ function createEntitiesFromJSON(jsonobj){
         }else if (type == "output"){
             name = "o-" + name;
         }
-        for (j = 0; j < items.length; j++){
+        for (var j = 0; j < items.length; j++){
             if(items[j].dataset.url == name+".png"){
                 items[j].click();
                 var edir = entities[ent].direction || 0;
@@ -168,7 +170,7 @@ function createEntitiesFromJSON(jsonobj){
                     rotations = rotations + 8;
                 }
                 rotations = Math.round(rotations / 2);
-                for (k = 0; k < rotations; k++){
+                for (var k = 0; k < rotations; k++){
                     rotatePreview();
                 }
                 var preview = document.querySelector('#preview div');
@@ -231,7 +233,7 @@ function sendToMyJSON(jsonstring){
             document.getElementById("uri").value = UpdateQueryString("id", id);
             document.getElementById("uri").select();
         }
-    }
+    };
     http.send(params);
 }
 
@@ -245,11 +247,11 @@ function getFromMyJSON(id){
             var resp = JSON.parse(http.responseText);
             createEntitiesFromJSON(resp);
         }
-    }
+    };
     http.send();
 }
 
-function savebtn() {
+window.savebtn = function() {
     var jsonstring = createJSON();
     if (jsonstring == ""){
         //to show on some text field
@@ -258,7 +260,7 @@ function savebtn() {
         sendToMyJSON(jsonstring);
     }
 
-}
+};
 
 window.closebtn = function () {
     document.getElementById("blueprint").style.display = "none";
@@ -289,9 +291,9 @@ function copyToClipboard(text) {
     }
 }
 
-window.copybtn = function () {
+window.copybtn = function (ev) {
     copyToClipboard(ev.target.parentElement.getElementsByClassName("modal__data")[0].value);
-    closebtn(ev);
+    window.closebtn(ev);
 };
 
 window.bpbtn = function () {
