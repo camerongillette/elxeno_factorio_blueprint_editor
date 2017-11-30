@@ -112,7 +112,7 @@ var placeable = [
     ["decider-combinator.png", 1, 2, 2, 1],
     ["arithmetic-combinator.png", 1, 2, 2, 1],
     ["programmable-speaker.png", 0, 0, 1, 1],
-    ["power-switch.png", 0, 0, 2, 2]];
+    ["power-switch.png", 0, 0, 2, 2]]);
 
 function createJSON() {
     var jsonstring = '{"blueprint": {"icons": [{"signal": {"type": "item","name": "express-transport-belt"},"index": 1}],"entities": [';
@@ -474,12 +474,12 @@ function createItems() {
     for (var i = 0; i < placeable.length; i++) {
         var item = document.createElement("div");
         item.setAttribute("class", "item");
-        url = placeable[i][0];
+        url = placeable[i].imagePath;
         item.setAttribute("data-url", url);
-        item.setAttribute("data-r", placeable[i][1]);
-        item.setAttribute("data-direction", placeable[i][2]);
-        item.setAttribute("data-w", placeable[i][3]);
-        item.setAttribute("data-h", placeable[i][4]);
+        item.setAttribute("data-r", placeable[i].rotation);
+        item.setAttribute("data-direction", placeable[i].direction);
+        item.setAttribute("data-w", placeable[i].width);
+        item.setAttribute("data-h", placeable[i].height);
         item.setAttribute("data-mirror-flipped-horizontal", (placeable[i].length === 6 && placeable[i][5] === 1));
         item.addEventListener('click', itemClick);
         insertImg(item, url);
@@ -558,7 +558,7 @@ function isBlocked(name, x, y) {
 
 function getPlaceableData(name) {
     for (var i in placeable) {
-        if (placeable[i][0].startsWith(name)) {
+        if (placeable[i].imagePath.startsWith(name)) {
             return placeable[i];
         }
     }
@@ -607,4 +607,12 @@ function encode(json) {
     var base64 = Base64.encodeU(zip);
     var bstring = "0" + base64;
     return bstring;
+}
+
+function factorioEntityObjectArrayFromMultiArray(sourceArray){
+    var objectArray = new Array();
+    for(var i = 0; i < sourceArray.length; i++){
+        objectArray.push(new Entity(sourceArray[i][0],sourceArray[i][1],sourceArray[i][2],sourceArray[i][3],sourceArray[i][4]));
+    }
+    return objectArray;
 }
