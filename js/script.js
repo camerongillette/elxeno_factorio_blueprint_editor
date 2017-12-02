@@ -115,49 +115,57 @@ var placeable = [
     ["power-switch.png", 0, 0, 2, 2]];
 
 function createJSON() {
-    var jsonstring = '{"blueprint": {"icons": [{"signal": {"type": "item","name": "express-transport-belt"},"index": 1}],"entities": [';
     var entities = document.getElementsByClassName("entity");
+    if (entities.length === 0) { return ""; }
 
-    if (entities.length == 0) {
-        return "";
-    } else {
-        for (var i = 0; i < entities.length; i++) {
-            var number = i + 1;
-            var name = entities[i].dataset.name;
-            var type = "";
-            if (name.slice(0, 2) == "i-" || name.slice(0, 2) == "o-") {
-                if (name.slice(0, 2) == "i-") {
-                    type = '"type": "input",';
-                } else {
-                    type = '"type": "output",';
-                }
-                name = name.slice(2);
-            }
-            var posx = Number(entities[i].dataset.x) + Number(entities[i].dataset.posoffsetx);
-            var posy = Number(entities[i].dataset.y) + Number(entities[i].dataset.posoffsety);
-            jsonstring = jsonstring + '{' +
-                '"entity_number": ' + number + ',' +
-                '"name": "' + name + '",' +
-                '"position": {' +
-                '"x": ' + posx + ',' +
-                '"y": ' + posy +
-                '},' + type +
-                '"direction":' + entities[i].dataset.direction +
-                '},';
+    var jsonObject = {
+        blueprint: {
+            icons: [{
+                signal: {
+                    type: "item",
+                    name: "express-transport-belt"
+                },
+                index: 1
+            }],
+            entities: [],
+            item: "blueprint",
+            version: 64426934272
         }
-        jsonstring = jsonstring.slice(0, -1) + '],' +
-            '"item": "blueprint",' +
-            '"version": 64426934272' +
-            '}' +
-            '}';
-        return jsonstring;
+    };
+
+    for (var i = 0; i < entities.length; i++) {
+        var dataset = entities[i].dataset;
+        var entity = {
+            type: "",
+            entity_number: i + 1,
+            name: dataset.name,
+            position: {
+                x: Number(dataset.x) + Number(dataset.posoffsetx),
+                y:  Number(dataset.y) + Number(dataset.posoffsety)
+            },
+            direction: dataset.direction
+        };
+
+        var namePrefix = entity.name.slice(0, 2);
+        if (namePrefix === "i-" || namePrefix === "o-") {
+            entity.name = entity.name.slice(2); // remove "i-" and "o-"
+
+            if (namePrefix === "i-") {
+                entity.type = "input";
+            } else {
+                entity.type = "output";
+            }
+        }
+
+        jsonObject.blueprint.entities.push(entity);
     }
-    
+
+    return JSON.stringify(jsonObject);
 }
 
 function createEntitiesFromJSON(jsonobj){
     var entities = jsonobj.blueprint.entities;
-    var items = document.querySelectorAll('#sidebar div'); 
+    var items = document.querySelectorAll('#sidebar div');
     console.log(entities.length);
     console.log(entities);
     for (var ent = 0; ent < entities.length; ent++){
@@ -206,7 +214,7 @@ function UpdateQueryString(key, value, url) {
         else {
             hash = url.split('#');
             url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-            if (typeof hash[1] !== 'undefined' && hash[1] !== null) 
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null)
                 url += '#' + hash[1];
             return url;
         }
@@ -216,7 +224,7 @@ function UpdateQueryString(key, value, url) {
             var separator = url.indexOf('?') !== -1 ? '&' : '?';
             hash = url.split('#');
             url = hash[0] + separator + key + '=' + value;
-            if (typeof hash[1] !== 'undefined' && hash[1] !== null) 
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null)
                 url += '#' + hash[1];
             return url;
         }
@@ -322,7 +330,7 @@ function updatePreviewCopies(){
     var copies = document.getElementsByClassName('preview__copy');
     for(var i = 0; i < copies.length; i++){
         copies[i].innerHTML = "";
-        
+
         if(!previewIsEmpty()){
             copies[i].appendChild(staticPreview);
         }
@@ -371,9 +379,9 @@ function rotatePreview() {
             offsetx = high * 16;
             offsety = high * 16;
         }
-        
+
         preview.setAttribute("data-direction", direction);
-        
+
         //Handles usecases where entity should be horizontally flipped instead of rotated, like inserters. Rotation 4 = 270 degrees
         if(rotation == 4){
             preview.style.transform = 'initial';
@@ -382,7 +390,7 @@ function rotatePreview() {
         else {
             preview.style.transform = 'rotate(' + 45 * rotation + 'deg)';
         }
-        
+
         preview.style.transformOrigin = offsetx + 'px ' + offsety + 'px';
         updatePreviewCopies();
     }
@@ -395,7 +403,7 @@ function createPreview(dataset) {
     var w = dataset.w;
     var h = dataset.h;
     var mirrorFlippedHorizontal = dataset.mirrorFlippedHorizontal;
-    
+
     var preview = document.getElementById("preview");
     //document.getElementsByTagName("body")[0].style.cursor = "url('icons/placeable/"+url+"'), auto";
     clearPreview();
@@ -412,7 +420,7 @@ function createPreview(dataset) {
     div.setAttribute("data-direction", direction);
     div.setAttribute("data-mirrorFlippedHorizontal", mirrorFlippedHorizontal);
     div.setAttribute("data-dirstart", direction);
-    
+
     var span = document.createElement("span");
     span.setAttribute("class", "preview__image-helper");
     div.appendChild(span);
@@ -576,7 +584,7 @@ function getPlaceableAt(x, y) {
         }
     }
 }
-    
+
 function tileMouseOver(event) {
     if (event.buttons != 0) { // any button is pressed
         tileClick(event, this);
