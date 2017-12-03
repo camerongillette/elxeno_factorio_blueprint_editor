@@ -38,7 +38,7 @@ placeable[4] = height/length
 placeable[5] = mirror flipped horizontal rotation
 */
 
-var placeable = [
+var placeable = factorioEntityObjectArrayFromMultiArray([
     ["assembling-machine-1.png", 1, 0, 3, 3],
     ["assembling-machine-2.png", 1, 0, 3, 3],
     ["assembling-machine-3.png", 1, 0, 3, 3],
@@ -48,16 +48,16 @@ var placeable = [
     ["roboport.png", 0, 0, 4, 4],
     ["lab.png", 0, 0, 3, 3],
     ["transport-belt.png", 1, 0, 1, 1],
-    ["i-underground-belt.png", 1, 2, 1, 1],
-    ["o-underground-belt.png", 1, 6, 1, 1],
+    ["i-underground-belt.png", 1, 2, 1, 1, 1],
+    ["o-underground-belt.png", 1, 6, 1, 1, 1],
     ["splitter.png", 1, 4, 2, 1],
     ["fast-transport-belt.png", 1, 0, 1, 1],
-    ["i-fast-underground-belt.png", 1, 2, 1, 1],
-    ["o-fast-underground-belt.png", 1, 6, 1, 1],
+    ["i-fast-underground-belt.png", 1, 2, 1, 1, 1],
+    ["o-fast-underground-belt.png", 1, 6, 1, 1, 1],
     ["fast-splitter.png", 1, 4, 2, 1],
     ["express-transport-belt.png", 1, 0, 1, 1],
-    ["i-express-underground-belt.png", 1, 2, 1, 1],
-    ["o-express-underground-belt.png", 1, 6, 1, 1],
+    ["i-express-underground-belt.png", 1, 2, 1, 1, 1],
+    ["o-express-underground-belt.png", 1, 6, 1, 1, 1],
     ["express-splitter.png", 1, 4, 2, 1],
     ["burner-mining-drill.png", 1, 4, 2, 2],
     ["electric-mining-drill.png", 1, 2, 3, 3],
@@ -66,7 +66,7 @@ var placeable = [
     ["heat-boiler.png", 1, 0, 3, 2],
     ["heat-pipe.png", 0, 0, 1, 1],
     ["pipe.png", 0, 0, 1, 1],
-    ["pipe-to-ground.png", 1, 2, 1, 1],
+    ["pipe-to-ground.png", 1, 2, 1, 1, 1],
     ["stone-furnace.png", 0, 0, 2, 2],
     ["steel-furnace.png", 0, 0, 2, 2],
     ["electric-furnace.png", 0, 0, 3, 3],
@@ -339,6 +339,7 @@ function rotatePreview() {
         var dirStart = Number(preview.dataset.dirstart);
         var w = (Number(preview.style.width.slice(0, -2)) + 2) / 32;
         var h = (Number(preview.style.height.slice(0, -2)) + 2) / 32;
+        var mirrorflippedhorizontal = preview.dataset.mirrorflippedhorizontal;
 
         var low;
         var high;
@@ -378,7 +379,7 @@ function rotatePreview() {
         preview.setAttribute("data-direction", direction);
 
         //Handles usecases where entity should be horizontally flipped instead of rotated, like inserters. Rotation 4 = 270 degrees
-        if(rotation === 4){
+        if(rotation == 4 && mirrorflippedhorizontal == 1){
             preview.style.transform = 'initial';
             preview.style.transform = 'scale(-1,1)';
         }
@@ -480,7 +481,7 @@ function createItems() {
         item.setAttribute("data-direction", placeable[i].direction);
         item.setAttribute("data-w", placeable[i].width);
         item.setAttribute("data-h", placeable[i].height);
-        item.setAttribute("data-mirror-flipped-horizontal", (placeable[i].length === 6 && placeable[i][5] === 1));
+        item.setAttribute("data-mirror-flipped-horizontal", placeable[i].mirrorFlippedHorizontal);
         item.addEventListener('click', itemClick);
         insertImg(item, url);
         grid.appendChild(item);
@@ -612,7 +613,7 @@ function encode(json) {
 function factorioEntityObjectArrayFromMultiArray(sourceArray){
     var objectArray = new Array();
     for(var i = 0; i < sourceArray.length; i++){
-        objectArray.push(new Entity(sourceArray[i][0],sourceArray[i][1],sourceArray[i][2],sourceArray[i][3],sourceArray[i][4]));
+        objectArray.push(new Entity(sourceArray[i][0],sourceArray[i][1],sourceArray[i][2],sourceArray[i][3],sourceArray[i][4],sourceArray[i][5]));
     }
     return objectArray;
 }
